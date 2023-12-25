@@ -1,0 +1,37 @@
+-- Insert 4 Qavat
+INSERT INTO qavat (id, qavat, created_date, updated_date)
+SELECT uuid_generate_v4(), g, now(), now()
+FROM generate_series(1, 4) AS g;
+
+-- Insert 20 Shkaf for each Qavat
+INSERT INTO shkaf (id, qavat_id, created_date, updated_date)
+SELECT uuid_generate_v4(), q.id, now(), now()
+FROM qavat q, generate_series(1, 20) AS g;
+
+-- Insert 10 Polka for each Shkaf
+INSERT INTO polka (id, shkaf_id, created_date, updated_date)
+SELECT uuid_generate_v4(), s.id, now(), now()
+FROM shkaf s, generate_series(1, 10) AS g;
+
+-- Insert 20 Book for each Polka
+-- INSERT INTO book (id, polka_id, name, author, page, created_date, updated_date)
+-- SELECT uuid_generate_v4(), p.id, 'Book ' || g, 'Author ' || g, 200, now(), now()
+-- FROM polka p, generate_series(1, 20) AS g;
+
+INSERT INTO book (id, polka_id, name, author, page, created_date, updated_date)
+SELECT DISTINCT ON (p.id, 'Book ' || g, 'Author ' || g)
+    uuid_generate_v4(),
+    p.id,
+    'Book ' || g,
+    'Author ' || g,
+    200,
+    now(),
+    now()
+FROM polka p
+         CROSS JOIN generate_series(1, 20) AS g;
+
+select book.polka_id from book where book.id ='0b823bff-409d-4282-ae00-33e23a590832';
+select * from polka where polka.id ='043c1b93-6434-467e-88ea-70ec669c9fbd';
+select shkaf.qavat_id from shkaf where shkaf.id ='0d73ef18-1698-4f3a-bf05-64ad9220a8fe';
+select qavat.qavat from qavat where qavat.id ='4c8dd030-4b79-46a3-89ba-1dee45276dc0';
+
