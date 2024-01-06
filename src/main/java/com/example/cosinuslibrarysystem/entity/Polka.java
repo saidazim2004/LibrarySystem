@@ -24,6 +24,7 @@ public class Polka extends BaseEntity {
     @Column(nullable = false)
     @OneToMany
     private List<Book> book ;
+    private boolean bookHas ;
 
 
     // Constructors, additional methods, and annotations as needed
